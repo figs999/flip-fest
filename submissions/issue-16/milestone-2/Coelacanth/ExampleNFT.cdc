@@ -2,7 +2,7 @@
 // It is not part of the official standard but it assumed to be
 // very similar to how many NFTs would implement the core functionality.
 
-import NonFungibleToken, MetaDataUtil, MIME, CommonMetaDataElements from 0x01
+import NonFungibleToken, MetaDataUtil, MIME, CommonMetaDataElements from 0xf8d6e0586b0a20c7
 
 pub contract ExampleNFT: NonFungibleToken {
 
@@ -16,11 +16,11 @@ pub contract ExampleNFT: NonFungibleToken {
 
     pub resource NFT: NonFungibleToken.INFT {
         pub let id: UInt64
-        pub let metadata : MetaDataUtil.MetaData?
+        pub let metadata : MetaDataUtil.MetaDataHolder?
 
         init(initID: UInt64, metadataElements : [MetaDataUtil.MetaDataElement]) {
             self.id = initID
-            self.metadata = MetaDataUtil.MetaData(metadataElements)
+            self.metadata = MetaDataUtil.MetaDataHolder(metadataElements)
         }
     }
 
@@ -96,6 +96,7 @@ pub contract ExampleNFT: NonFungibleToken {
 
             // create a new NFT
             let elements : [MetaDataUtil.MetaDataElement] = [
+                MetaDataUtil.MetaDataElement(metadata: CommonMetaDataElements.DCNamespace()),
                 MetaDataUtil.MetaDataElement(metadata: CommonMetaDataElements.DefaultName(name: name)),
                 MetaDataUtil.MetaDataElement(metadata: CommonMetaDataElements.DefaultDescription(description: description)),
                 MetaDataUtil.MetaDataElement(metadata: CommonMetaDataElements.PNG_RemoteDefaultImage(id: providerID!, capability: capability))
