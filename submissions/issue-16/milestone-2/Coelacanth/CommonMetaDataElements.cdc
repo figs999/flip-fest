@@ -1,4 +1,5 @@
-import MetaDataUtil, MIME from 0xf8d6e0586b0a20c7
+import MetaDataUtil from 0xf8d6e0586b0a20c7
+import MIME from 0xf8d6e0586b0a20c7
 
 pub contract CommonMetaDataElements {
     //This implementation allows the tags to also be immutable if required for some reason
@@ -116,6 +117,7 @@ pub contract CommonMetaDataElements {
         }
 
         pub fun getTags() : [String] {
+            if(self.dataProvider.borrow() == nil) { panic("no data provider available!") }
             return self.dataProvider.borrow()!.getTags(id: self.id)
         }
     }
@@ -197,6 +199,7 @@ pub contract CommonMetaDataElements {
         }
 
         pub fun getTags() : [String] {
+            if(self.dataProvider.borrow() == nil) { panic("no data provider available!") }
             return self.dataProvider.borrow()!.getTags(id: self.id)
         }
     }

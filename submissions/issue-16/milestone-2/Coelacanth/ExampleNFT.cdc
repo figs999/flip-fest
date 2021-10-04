@@ -2,13 +2,14 @@
 // It is not part of the official standard but it assumed to be
 // very similar to how many NFTs would implement the core functionality.
 
-import NonFungibleToken, MetaDataUtil, MIME, CommonMetaDataElements from 0xf8d6e0586b0a20c7
+import MetaDataUtil from 0xf8d6e0586b0a20c7
+import NonFungibleToken from 0xf8d6e0586b0a20c7
+import CommonMetaDataElements from 0xf8d6e0586b0a20c7
 
 pub contract ExampleNFT: NonFungibleToken {
 
     pub var totalSupply: UInt64
     access(contract) let sharedImages : {String: UInt64}
-    access(contract) let remotePNGProvider : CommonMetaDataElements.RemotePNGProvider
 
     pub event ContractInitialized()
     pub event Withdraw(id: UInt64, from: Address?)
@@ -112,8 +113,9 @@ pub contract ExampleNFT: NonFungibleToken {
     }
 
     access(contract) fun AddImage(id: UInt64, imgData: [UInt8], static: Bool) {
-        self.remotePNGProvider.addImage(id: id, imgData: imgData, static: static)
-        self.account.save(self.remotePNGProvider, to: /storage/ExampleNFTRemotePNGProvider)
+        let remotePNGProvider = ExampleNFT.account.borrow<&CommonMetaDataElements.RemotePNGProvider>(from: /storage/ExampleNFTRemotePNGProvider)!
+        remotePNGProvider.addImage(id: id, imgData: imgData, static: static)
+        //self.account.save(self.remotePNGProvider, to: /storage/ExampleNFTRemotePNGProvider)
     }
 
     init() {
@@ -122,8 +124,7 @@ pub contract ExampleNFT: NonFungibleToken {
 
         // Initialize the shared image cache
         self.sharedImages = {}
-        self.remotePNGProvider = CommonMetaDataElements.RemotePNGProvider()
-        self.account.save(self.remotePNGProvider, to: /storage/ExampleNFTRemotePNGProvider)
+        self.account.save(CommonMetaDataElements.RemotePNGProvider(), to: /storage/ExampleNFTRemotePNGProvider)
         self.account.link<&CommonMetaDataElements.RemotePNGProvider{MetaDataUtil.IMetaDataProvider}>(/public/ExampleNFTRemotePNGProvider, target: /storage/ExampleNFTRemotePNGProvider)
 
         // Create a Collection resource and save it to storage
